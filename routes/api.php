@@ -38,3 +38,11 @@ Route::group([
     Route::post('sendEmailVerify','AuthController@createCode');
 
 });
+
+
+//category
+Route::group([
+    'namespace'=> 'App\Http\Controllers'
+],function (){
+    Route::post('/category','CategoryController@store');
+});
