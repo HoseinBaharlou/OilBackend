@@ -54,3 +54,10 @@ Route::group([
 ],function (){
     Route::post('/article','ArticleController@store');
 });
+
+//news
+Route::group([
+    'namespace'=> 'App\Http\Controllers'
+],function (){
+    Route::post('/news','NewsController@store');
+});
