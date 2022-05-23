@@ -47,3 +47,10 @@ Route::group([
     Route::post('/category','CategoryController@store');
     Route::get('/category','CategoryController@show');
 });
+
+//article
+Route::group([
+    'namespace'=> 'App\Http\Controllers'
+],function (){
+    Route::post('/article','ArticleController@store');
+});
