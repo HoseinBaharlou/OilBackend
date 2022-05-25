@@ -61,3 +61,11 @@ Route::group([
 ],function (){
     Route::post('/news','NewsController@store');
 });
+
+
+// home page
+Route::group([
+    'namespace'=> 'App\Http\Controllers'
+],function (){
+    Route::post('/image-header','HeaderController@image_header');
+});

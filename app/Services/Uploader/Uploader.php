@@ -2,47 +2,58 @@
 
 namespace App\Services\Uploader;
 
+use Dflydev\DotAccessData\Data;
 use Illuminate\Http\Request;
 
 class Uploader{
 
+  private $files;
   private $storageManager;
-  private $file;
-
   public function __construct(Request $request,StorageManager $storageManager)
   {
-    $this->file = $request->file('file');
     $this->storageManager = $storageManager;
-  }
-  // upload file in public folder
-  public function upload_public(){
-    // create file name
-    $file_name = $this->File_Name($this->file->getClientOriginalExtension());
-    // upload 
-    $this->storageManager->putFileAsPublic($this->File_Name($this->file->getClientOriginalExtension()),$this->file,$this->getType());
-    // return file name
-    return $file_name;
-  }
-  // upload file in private folder
-  public function upload_private(){
-    // create file name
-    $file_name = $this->File_Name($this->file->getClientOriginalExtension());
-    // upload 
-    $this->storageManager->putFileAsPrivate($file_name,$this->file,$this->getType());
-    // return file name
-    return $file_name;
-  }
-  // GET Mime type
-  private function getType(){
-    return[
-      'image/jpeg'=>'image',
-      'image/png'=>'image',
-      'application/pdf'=>'pdf'
-    ][$this->file->getClientMimeType()];
+    $this->files = $request->file('file');
   }
 
-  // change file name
-  private function File_Name(string $Extension){
-    return sha1(time()).'.'.$Extension;
+  public function upload($isPrivate){
+    return $this->putFileIntoStorage($isPrivate);
+  }
+
+  private function putFileIntoStorage($isPrivate){
+    $method = $isPrivate ? 'PutFileAsPrivate' : 'putFileAsPublic';
+    $fileName = [];
+    if (gettype($this->files) == "array"){
+        for ($i=0;$i<count($this->files);$i++){
+            $file = $this->files[$i];
+            $FileName = $this->fileName($file->getClientOriginalExtension());
+            // save file name
+            array_push($fileName,$FileName);
+            $Type = $this->getType($file->getClientMimeType());
+            $this->storageManager->$method($FileName,$file,$Type);
+        }
+        $fileName = implode(',',$fileName);
+        return $fileName;
+    }else if(gettype($this->files) == "object"){
+        $file = $this->files;
+        $FileName = $this->fileName($file->getClientOriginalExtension());
+        $Type = $this->getType($file->getClientMimeType());
+        $this->storageManager->$method($FileName,$file,$Type);
+        return $fileName = $FileName;
+    }
+  }
+
+  private function getType($MimeType){
+    return [
+      'image/jpeg'=>'image',
+      'video/mp4'=>'video',
+      'application/zip'=>'archive',
+      'image/png'=>'image'
+    ][
+      $MimeType
+    ];
+  }
+
+  private function fileName($Extension){
+      return sha1(random_bytes(20)).'.'.$Extension;
   }
 }
