@@ -15,11 +15,13 @@ class CreateHeadersTable extends Migration
     {
         Schema::create('headers', function (Blueprint $table) {
             $table->id();
-            $table->string('file')->nullable();
+            $table->text('file')->nullable();
             $table->string('size')->nullable();
             $table->string('file_info')->nullable();
             $table->string('title')->nullable();
             $table->string('subtitle')->nullable();
+            $table->integer('width')->nullable();
+            $table->integer('height')->nullable();
             $table->boolean('slider')->nullable();
             $table->timestamps();
         });

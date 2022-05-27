@@ -7,8 +7,8 @@ use App\Jobs\sendEmail;
 use App\Mail\VerifyCode;
 use App\Models\IpAddress;
 use App\Models\User;
-use App\Services\Token\Token;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -79,21 +79,14 @@ class AuthController extends Controller
             ],401);
         }
         // attemp user
-        auth()->attempt($request->only(['email','password']));
-
-        //check auth user
-        if (auth()->check()){
-            $user = auth()->user();
-            // get user ip
-            $this->Get_ip($user->id,$request->ip());
-
-            $token = Token::generate($user->id);
-
-            return response()->json(['access_token'=>$token,'email'=>$user->email,'verify'=>$user->email_verified_at !== null ? true : false],201)->withCookie('token',$token,Token::$expire_time);
-        }else{
+        if (!Auth::attempt($request->only('email','password'))){
             return response()->json([
                 'errors'=>'ایمیل یا رمز عبور نادرست است.'
             ],401);
+        }else{
+            $user = auth()->user();
+            // get user ip
+            $this->Get_ip($user->id,$request->ip());
         }
     }
     // get ip
@@ -137,7 +130,7 @@ class AuthController extends Controller
 
 //        response
         return response()->json([
-            'success'=>true
+            'success'=>'کد وارد شده صحیح است.'
         ],201);
     }
     // create otp code
@@ -156,8 +149,9 @@ class AuthController extends Controller
         $checkEmail = User::where('email','=',$request->email)->first();
 
         if($checkEmail->email_verified_at !== null){
-            dd($checkEmail->email_verified_at);
-            return abort(404);
+            return response()->json([
+                'errors'=>'این ایمیل قبلا تایید شده است و مشکلی ندارد'
+            ],404);
         }
 
         // update column
@@ -167,6 +161,10 @@ class AuthController extends Controller
         ]);
         // send verify code
         $this->verify_code($request->email,$random);
+
+        return response()->json([
+            'success'=>'کد تایید با موفقیت ایجاد شد.'
+        ],201);
     }
     // check email verified
     public function email_verified(Request $request){
@@ -177,5 +175,10 @@ class AuthController extends Controller
             return false;
         }
         return true;
+    }
+
+    //logout user
+    public function logout(){
+        Auth::logout();
     }
 }

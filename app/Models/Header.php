@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Header extends Model
 {
     use HasFactory;
-    protected $fillable = ['file','size','file_info','title','subtitle','slider'];
+    protected $fillable = ['file','size','file_info','title','subtitle','slider','width','height'];
 }

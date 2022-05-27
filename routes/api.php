@@ -22,21 +22,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 // auth routes
 Route::group([
-
-    'middleware' => 'api',
     'prefix' => 'auth',
     'namespace'=> 'App\Http\Controllers\auth'
 
 ], function ($router) {
-
     Route::post('login', 'AuthController@login');
     Route::post('register', 'AuthController@register');
     Route::post('logout', 'AuthController@logout');
-    Route::post('refresh', 'AuthController@refresh');
-    Route::post('profile', 'AuthController@profile');
     Route::post('otp','AuthController@otp');
     Route::post('sendEmailVerify','AuthController@createCode');
-
 });
 
 
@@ -68,4 +62,12 @@ Route::group([
     'namespace'=> 'App\Http\Controllers'
 ],function (){
     Route::post('/image-header','HeaderController@image_header');
+    Route::post('/slider-header','HeaderController@Slider_header');
+    Route::get('/show-header','HeaderController@show');
+});
+
+
+//removeFile
+Route::post('/delete-file',function (Request $request){
+    \App\Services\Uploader\StorageManager::deleteFile($request->name,$request->type,$request->isPrivate);
 });
