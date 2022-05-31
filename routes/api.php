@@ -17,7 +17,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    return response()->json([
+        'information'=>$request->user(),
+        'permissions'=>auth()->user()->permissions->pluck('name')
+    ]);
 });
 
 // auth routes
@@ -70,4 +73,24 @@ Route::group([
 //removeFile
 Route::post('/delete-file',function (Request $request){
     \App\Services\Uploader\StorageManager::deleteFile($request->name,$request->type,$request->isPrivate);
+});
+
+//users manager
+Route::group([
+    'namespace'=> 'App\Http\Controllers'
+],function (){
+    Route::get('users-list','UsersController@index')->middleware(['auth:sanctum','can:users_list']);
+    Route::post('update-user/{id}','UsersController@update')->middleware(['auth:sanctum','can:edit_users']);
+    Route::post('users/{user}/update-role','UsersController@add_role_permission')->middleware(['auth:sanctum','can:edit_role_user']);
+    Route::get('user_roles','RoleController@index')->middleware(['auth:sanctum','can:users_list']);
+});
+
+//roles and permissions
+Route::group([
+    'namespace'=> 'App\Http\Controllers'
+],function (){
+    Route::get('roles','RoleController@index')->middleware(['auth:sanctum','can:role_list']);
+    Route::post('roles','RoleController@store')->middleware(['auth:sanctum','can:create_role']);
+    Route::get('roles/{role}','RoleController@edit')->middleware(['auth:sanctum','can:edit_role']);
+    Route::post('roles/{role}/update','RoleController@update')->middleware(['auth:sanctum','can:edit_role']);
 });

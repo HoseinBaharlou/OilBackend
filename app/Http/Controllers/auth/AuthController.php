@@ -87,6 +87,9 @@ class AuthController extends Controller
             $user = auth()->user();
             // get user ip
             $this->Get_ip($user->id,$request->ip());
+            //visit
+            $user->count_visit +=1;
+            $user->save();
         }
     }
     // get ip

@@ -16,10 +16,18 @@ class UserFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'email' => $this->faker->unique()->safeEmail(),
+            'email' => $this->faker->email,
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
+            'last_name'=>$this->faker->lastName,
+            'address'=>$this->faker->address,
+            'phone_number'=>$this->faker->phoneNumber,
+            'tag'=>$this->faker->numberBetween(1,5),
+            'agreement'=>1,
+            'email_code'=>Str::random(6),
+            'expire_time'=>time()+60*2*60,
+            'zip_code'=>$this->faker->numberBetween(10,10),
         ];
     }
 

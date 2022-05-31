@@ -8,10 +8,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
+use App\Services\Permissions\Traits\HasPermission;
+use App\Services\Permissions\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable,HasPermission,HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -19,7 +21,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'email', 'password','last_name','phone_number','agreement','tag','address','zip_code','email_code','expire_time'
+        'name', 'email', 'password','last_name','phone_number','agreement','tag','address','zip_code','email_code','expire_time','remember_token'
     ];
 
     /**
@@ -40,4 +42,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function ip_addresses(){
+        return $this->hasOne(IpAddress::class)->latest();
+    }
+
 }

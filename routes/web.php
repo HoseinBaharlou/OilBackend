@@ -14,5 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    auth()->attempt(['email'=>'hossinbahar98@gmail.com','password'=>13801380]);
+    dd(auth()->user()->can('users_list'));
 });
