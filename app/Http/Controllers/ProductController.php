@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Services\Uploader\StorageManager;
 use App\Services\Uploader\Uploader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -17,7 +18,7 @@ class ProductController extends Controller
         self::$uploader = $uploader;
     }
     public function index(){
-        $product = Product::all();
+        $product = Product::withoutTrashed()->get();
 
         return response()->json([
             'product'=>ProductResource::collection($product)
@@ -136,6 +137,34 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $product = Product::withTrashed()->findOrFail($id);
+        StorageManager::deleteFile($product->file,'image',false);
+        Product::withTrashed()->findOrFail($id)->forceDelete();
+        return response()->json([
+            'success'=>'محصول با موفقیت حذف شد.'
+        ],200);
+    }
+//    soft delete
+    public function softDelete($id){
+        Product::destroy($id);
+        return response()->json([
+            'success'=>'محصول با موفقیت به سطل زباله منتقل شد.'
+        ],200);
+    }
+    //trash
+    public function trash(){
+        $product = Product::onlyTrashed()->get();
+
+        return response()->json([
+            'trash'=>ProductResource::collection($product)
+        ],200);
+    }
+
+    //restore
+    public function restore($id){
+        Product::onlyTrashed()->findOrFail($id)->restore();
+        return response()->json([
+            'success'=>'محصول با موفقیت به لیست محصولات بازگشت.'
+        ],200);
     }
 }

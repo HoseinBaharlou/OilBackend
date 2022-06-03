@@ -106,4 +106,8 @@ Route::group([
     Route::post('product','ProductController@store')->middleware(['auth:sanctum','can:product_create']);
     Route::get('product/{product}/edit','ProductController@edit')->middleware(['auth:sanctum','can:edit_product']);
     Route::post('product/{product}/update','ProductController@update')->middleware(['auth:sanctum','can:edit_product']);
+    Route::get('product/{id}/softDelete','ProductController@softDelete')->middleware(['auth:sanctum','can:product_trash_manager']);
+    Route::get('product/trash','ProductController@trash')->middleware(['auth:sanctum','can:product_trash_manager']);
+    Route::get('product/{id}/restore','ProductController@restore')->middleware(['auth:sanctum','can:product_trash_manager']);
+    Route::get('product/{id}/destroy','ProductController@destroy')->middleware(['auth:sanctum','can:product_trash_manager']);
 });
