@@ -17,10 +17,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return response()->json([
-        'information'=>$request->user(),
-        'permissions'=>auth()->user()->permissions->pluck('name')
-    ]);
+    return $request->user();
 });
 
 // auth routes
@@ -84,7 +81,13 @@ Route::group([
     Route::post('users/{user}/update-role','UsersController@add_role_permission')->middleware(['auth:sanctum','can:edit_role_user']);
     Route::get('user_roles','RoleController@index')->middleware(['auth:sanctum','can:users_list']);
 });
-
+//profile
+Route::group([
+    'namespace'=> 'App\Http\Controllers'
+],function (){
+    Route::post('profile','updateProfileController@update')->middleware('auth:sanctum');
+    Route::delete('profile','updateProfileController@delete')->middleware('auth:sanctum');
+});
 //roles and permissions
 Route::group([
     'namespace'=> 'App\Http\Controllers'
@@ -93,4 +96,14 @@ Route::group([
     Route::post('roles','RoleController@store')->middleware(['auth:sanctum','can:create_role']);
     Route::get('roles/{role}','RoleController@edit')->middleware(['auth:sanctum','can:edit_role']);
     Route::post('roles/{role}/update','RoleController@update')->middleware(['auth:sanctum','can:edit_role']);
+});
+
+//product
+Route::group([
+    'namespace'=> 'App\Http\Controllers'
+],function (){
+    Route::get('product','ProductController@index')->middleware(['auth:sanctum','can:product_list']);
+    Route::post('product','ProductController@store')->middleware(['auth:sanctum','can:product_create']);
+    Route::get('product/{product}/edit','ProductController@edit')->middleware(['auth:sanctum','can:edit_product']);
+    Route::post('product/{product}/update','ProductController@update')->middleware(['auth:sanctum','can:edit_product']);
 });

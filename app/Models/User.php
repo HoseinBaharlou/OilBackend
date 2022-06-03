@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 use App\Services\Permissions\Traits\HasPermission;
@@ -43,8 +44,27 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = ['permission','profile_src'];
+
     public function ip_addresses(){
         return $this->hasOne(IpAddress::class)->latest();
     }
 
+    public function getPermissionAttribute()
+    {
+
+        return auth()->user()->permissions->pluck('name');
+
+    }
+
+    public function getProfileSrcAttribute()
+    {
+
+        if (auth()->user()->profile){
+            return asset('profiles/'.auth()->user()->profile);
+        }else{
+            return null;
+        }
+
+    }
 }

@@ -124,8 +124,8 @@ class UsersController extends Controller
     public function add_role_permission(Request $request,User $user){
         //validate
         $validator = Validator::make($request->all(),[
-            'roles'=>'required|array|min:1',
-            'permissions'=>'required|array|min:1',
+            'roles'=>'array',
+            'permissions'=>'array',
         ]);
         //check validate
         if ($validator->fails()){
