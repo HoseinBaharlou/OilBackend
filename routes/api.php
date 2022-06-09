@@ -38,25 +38,41 @@ Route::group([
 Route::group([
     'namespace'=> 'App\Http\Controllers'
 ],function (){
-    Route::post('/category','CategoryController@store');
+    Route::post('/category','CategoryController@store')->middleware(['auth:sanctum','can:create_category']);
     Route::get('/category','CategoryController@show');
 });
 
-//article
+//post
 Route::group([
-    'namespace'=> 'App\Http\Controllers'
+    'namespace'=> 'App\Http\Controllers\Post'
 ],function (){
-    Route::post('/article','ArticleController@store');
+    Route::get('/posts','showPostController@index');
+    Route::get('/posts/{id}','showPostController@show');
+    Route::get('/post','PostController@index')->middleware(['auth:sanctum','can:post_list']);
+    Route::post('/post','PostController@store')->middleware(['auth:sanctum,can:create_post']);
+    Route::get('/post/{id}/edit','PostController@edit')->middleware(['auth:sanctum,can:edit_post']);
+    Route::post('/post/{post}/update','PostController@update')->middleware(['auth:sanctum,can:edit_post']);
+    Route::get('post/{id}/softDelete','PostController@softDelete')->middleware(['auth:sanctum','can:post_trash_manager']);
+    Route::get('post/trash','PostController@trash')->middleware(['auth:sanctum','can:post_trash_manager']);
+    Route::get('post/{id}/restore','PostController@restore')->middleware(['auth:sanctum','can:post_trash_manager']);
+    Route::get('post/{id}/destroy','PostController@destroy')->middleware(['auth:sanctum','can:post_trash_manager']);
+});
+//route likes post
+Route::group([
+    'namespace'=> 'App\Http\Controllers\Post'
+],function (){
+    Route::post('likes/{post}','LikesController@store');
+    Route::delete('likes/{post}','LikesController@destroy');
 });
 
-//news
+//route comments
 Route::group([
-    'namespace'=> 'App\Http\Controllers'
+    'namespace'=> 'App\Http\Controllers\Comment'
 ],function (){
-    Route::post('/news','NewsController@store');
+    Route::post('comments/{post}','CommentController@store')->middleware('auth:sanctum');
+    Route::post('comments/replies/{post}','ReplyController@store')->middleware('auth:sanctum');
+    Route::delete('comments/{comment}','CommentController@destroy')->middleware(['auth:sanctum','can:delete_comment']);
 });
-
-
 // home page
 Route::group([
     'namespace'=> 'App\Http\Controllers'
@@ -111,3 +127,6 @@ Route::group([
     Route::get('product/{id}/restore','ProductController@restore')->middleware(['auth:sanctum','can:product_trash_manager']);
     Route::get('product/{id}/destroy','ProductController@destroy')->middleware(['auth:sanctum','can:product_trash_manager']);
 });
+
+
+Route::get('/content',[\App\Http\Controllers\ContentController::class,'index']);

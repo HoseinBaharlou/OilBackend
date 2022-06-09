@@ -44,7 +44,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    protected $appends = ['permission','profile_src'];
+    protected $appends = ['profile_src','permission'];
 
     public function ip_addresses(){
         return $this->hasOne(IpAddress::class)->latest();
@@ -53,18 +53,20 @@ class User extends Authenticatable
     public function getPermissionAttribute()
     {
 
-        return auth()->user()->permissions->pluck('name');
-
+        if (auth()->check()){
+            return auth()->user()->permissions->pluck('name');
+        }else{
+            return optional(auth()->user())->name;
+        }
     }
 
     public function getProfileSrcAttribute()
     {
 
-        if (auth()->user()->profile){
+        if (auth()->check()){
             return asset('profiles/'.auth()->user()->profile);
         }else{
-            return null;
+            return optional(auth()->user())->name;
         }
-
     }
 }

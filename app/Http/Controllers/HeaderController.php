@@ -40,6 +40,7 @@ class HeaderController extends Controller
         //check database
         $header = Header::all();
         if (count($header) > 0){
+
             StorageManager::deleteFile($header->first()->file,'image',false);
             Header::where('id','=',1)->update([
                 'file'=>$fileName,
@@ -49,7 +50,7 @@ class HeaderController extends Controller
             ]);
         }else{
             Header::create([
-                'name'=>$fileName,
+                'file'=>$fileName,
                 'size'=>number_format($size / 1048576, 2) . ' MB',
                 'file_info'=>implode(',',$image),
                 'slider'=>0
@@ -84,7 +85,7 @@ class HeaderController extends Controller
                 'errors'=>$validator->errors()->first()
             ],401);
         }
-
+        return $request->all();
         // upload file
         $FilesName = self::$uploader->upload(false,true);
         //add to table header

@@ -22,9 +22,10 @@ class CategoryController extends Controller
     public function store(Request $request){
         //check table row
         //validate
-        $validator = Validator::make( $request->only(['title','parent_id']),[
+        $validator = Validator::make( $request->only(['title','parent_id','type']),[
             'title'=>'required|string|min:1',
-            'parent_id'=>'required|integer'
+            'parent_id'=>'required|integer',
+            'type'=>'required|string|max:10|min:4'
         ]);
 
         if ($validator->fails()){
@@ -48,6 +49,7 @@ class CategoryController extends Controller
         Category::create([
             'title'=>$request->title,
             'parent_id'=>$request->parent_id,
+            'type'=>$request->type
         ]);
 
         return response()->json([
