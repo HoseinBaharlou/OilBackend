@@ -25,6 +25,7 @@ class User extends Authenticatable
         'name', 'email', 'password','last_name','phone_number','agreement','tag','address','zip_code','email_code','expire_time','remember_token'
     ];
 
+    protected $with = ['analyze'];
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -50,6 +51,9 @@ class User extends Authenticatable
         return $this->hasOne(IpAddress::class)->latest();
     }
 
+    public function analyze(){
+        return $this->hasMany(Analyze::class);
+    }
     public function getPermissionAttribute()
     {
 

@@ -57,12 +57,15 @@ class Uploader{
     }
   }
   // get type file
-  private function getType($MimeType){
+  public function getType($MimeType){
     return [
       'image/jpeg'=>'image',
       'video/mp4'=>'video',
       'application/zip'=>'archive',
-      'image/png'=>'image'
+      'image/png'=>'image',
+      'application/pdf'=>'pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'=>'docx',
+      'application/msword'=>'doc'
     ][
       $MimeType
     ];

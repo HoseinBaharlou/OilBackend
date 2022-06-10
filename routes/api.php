@@ -128,5 +128,14 @@ Route::group([
     Route::get('product/{id}/destroy','ProductController@destroy')->middleware(['auth:sanctum','can:product_trash_manager']);
 });
 
+//analyze file
+Route::group([
+    'namespace'=> 'App\Http\Controllers'
+],function (){
+    Route::get('analyze','AnalyzeController@index')->middleware(['auth:sanctum','can:file_manager']);
+    Route::delete('analyze/{analyze}','AnalyzeController@destroy')->middleware(['auth:sanctum','can:file_manager']);
+    Route::get('analyze/{analyze}','AnalyzeController@show');
+    Route::post('analyze','AnalyzeController@store')->middleware('auth:sanctum');
+});
 
 Route::get('/content',[\App\Http\Controllers\ContentController::class,'index']);

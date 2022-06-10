@@ -17,3 +17,4 @@ Route::get('/', function () {
     auth()->attempt(['email'=>'hossinbahar98@gmail.com','password'=>13801380]);
     dd(auth()->user()->can('users_list'));
 });
+Route::post('auth/register', [\App\Http\Controllers\auth\AuthController::class,'register']);

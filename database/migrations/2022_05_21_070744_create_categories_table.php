@@ -15,8 +15,10 @@ class CreateCategoriesTable extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->integer('parent_id');
+            $table->string('title')->nullable();
+            $table->foreignId('parent_id')->nullable()->constrained('categories')->references('id')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('type',10)->nullable();
+            $table->softDeletes();
         });
     }
 

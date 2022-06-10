@@ -18,6 +18,11 @@ class StorageManager{
       $isPrivate = $isPrivate ? 'private' : 'public';
       return Storage::disk($isPrivate)->delete(self::DirectoryPrefix($type,$name));
   }
+  //download file
+  public function getFile(string $name,string $type,bool $isPrivate){
+      $isPrivate = $isPrivate ? 'private' : 'public';
+      return Storage::disk($isPrivate)->download(self::DirectoryPrefix($type,$name));
+  }
 //  directory private or public address
   public static function DirectoryPrefix($type,$name){
       return $type.DIRECTORY_SEPARATOR.$name;
