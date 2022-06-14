@@ -9,15 +9,19 @@ use Illuminate\Http\Request;
 class LikesController extends Controller
 {
     public function store(Request $request,Post $post){
-        $post->likes()->sync(
-            $request->user()->id,
-            false
-        );
+        if (auth()->check()){
+            $post->likes()->sync(
+                $request->user()->id,
+                false
+            );
+        }
     }
 
     public function destroy(Request $request,Post $post){
-        $post->likes()->detach(
-            $request->user()->id
-        );
+        if (auth()->check()){
+            $post->likes()->detach(
+                $request->user()->id
+            );
+        }
     }
 }

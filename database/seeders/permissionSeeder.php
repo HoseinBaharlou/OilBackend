@@ -113,6 +113,10 @@ class permissionSeeder extends Seeder
                 'name'=>'delete_comment',
                 'persian_name'=>'حذف کامنت'
             ],
+            [
+              'name'=>'edit_users',
+              'persian_name'=>'ویرایش کاربر'
+            ],
         ];
 
         for ($i=0;$i < count($permission);$i++){

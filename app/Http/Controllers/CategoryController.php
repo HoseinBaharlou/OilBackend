@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
+
+    public function index(){
+        $category = Category::all();
+        return response()->json([
+            'category'=>$category[0]
+        ],200);
+    }
     //check category
     public function CheckCategory($title,$parent_id){
         $check = Category::where($title,'=','title')->where('parent_id','=', $parent_id);
@@ -45,9 +52,11 @@ class CategoryController extends Controller
                 'errors'=>'دسته بندی مورد نظر قبلا ایجاد شده است.'
             ],404);
         }
+        $slug = implode('_',explode(' ',$request->title));
         // add to category
-        Category::create([
+        Category::insert([
             'title'=>$request->title,
+            'slug'=>$slug,
             'parent_id'=>$request->parent_id,
             'type'=>$request->type
         ]);

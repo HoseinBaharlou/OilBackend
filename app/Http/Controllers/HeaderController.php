@@ -42,18 +42,22 @@ class HeaderController extends Controller
         if (count($header) > 0){
 
             StorageManager::deleteFile($header->first()->file,'image',false);
-            Header::where('id','=',1)->update([
+            Header::all()->last()->update([
                 'file'=>$fileName,
                 'size'=>number_format($size / 1048576, 2) . ' MB',
                 'file_info'=>implode(',',$image),
-                'slider'=>0
+                'slider'=>0,
+                'height'=>$request->height,
+                'width'=>$request->width
             ]);
         }else{
             Header::create([
                 'file'=>$fileName,
                 'size'=>number_format($size / 1048576, 2) . ' MB',
                 'file_info'=>implode(',',$image),
-                'slider'=>0
+                'slider'=>0,
+                'height'=>$request->height,
+                'width'=>$request->width
             ]);
         }
         //response
@@ -85,14 +89,13 @@ class HeaderController extends Controller
                 'errors'=>$validator->errors()->first()
             ],401);
         }
-        return $request->all();
         // upload file
         $FilesName = self::$uploader->upload(false,true);
         //add to table header
         $header = Header::all();
         if (count($header) > 0){
             //check file for add to table
-            $Files = $header->where('id','=',1)->first();
+            $Files = $header->last();
             $Files = explode(',',$Files->file);
             $FilesName = explode(',',$FilesName);
             foreach ($Files as $item){
@@ -100,20 +103,19 @@ class HeaderController extends Controller
                     array_push($FilesName,$item);
                 }
             }
-            Header::where('id','=',1)->update([
+            Header::all()->last()->update([
                 'file'=>implode(',',$FilesName),
                 'slider'=>$request->slider,
                 'width'=>$request->width,
                 'height'=>$request->height,
-                'size'=>null,
+                'size'=>null, //null size for check multi image of one single image
             ]);
         }else{
-
             Header::create([
-                'name'=>implode(',',$FilesName),
+                'file'=>$FilesName,
                 'slider'=>$request->slider,
-                'size'=>null,
-
+                'width'=>$request->width,
+                'height'=>$request->height
             ]);
         }
 
@@ -134,7 +136,7 @@ class HeaderController extends Controller
         return response()->json([
             'name'=>$New_File_Name,
             'url'=>$New_File_Url,
-            'updated_at'=>$header->first()->updated_at
+            'updated_at'=>convert_date::jalali(Header::all()->first()->updated_at)
         ]);
     }
 
@@ -145,7 +147,7 @@ class HeaderController extends Controller
         if($header->isEmpty()){
             return response()->json(null,200);
         }
-        $FilesName = explode(',',$header->first()->file);
+        $FilesName = explode(',',$header->last()->file);
         $New_File_Url = [];
         foreach ($FilesName as $item){
             $new_path = storage_path('app/public/image/'.$item);
@@ -158,5 +160,39 @@ class HeaderController extends Controller
             'url'=>$New_File_Url,
             'name'=>$FilesName
         ]);
+    }
+
+    //add title and subtitle
+    public function content_header(Request $request){
+        //validate
+        $validator = Validator::make($request->all(),[
+           'title'=>'required|string|max:100',
+           'subtitle.*'=>'required|string|max:10'
+        ]);
+
+        if ($validator->fails()){
+            return response()->json([
+                'errors'=>$validator->errors()->first()
+            ],401);
+        }
+        //insert and update header table
+        $header = Header::all();
+        if (count($header) > 0){
+            $header->last()->update([
+                'title'=>$request->title,
+                'subtitle'=>implode(',',$request->subtitle)
+            ]);
+        }else{
+            Header::create([
+                'title'=>$request->title,
+                'subtitle'=>implode(',',$request->subtitle)
+            ]);
+        }
+
+        //res
+        return response()->json([
+            'success'=>'عملیات با موفقیت انجام شد.'
+        ],201);
+
     }
 }

@@ -40,6 +40,15 @@ Route::group([
 ],function (){
     Route::post('/category','CategoryController@store')->middleware(['auth:sanctum','can:create_category']);
     Route::get('/category','CategoryController@show');
+    Route::get('/categories','CategoryController@index');
+});
+
+//show category
+Route::group([
+    'namespace'=> 'App\Http\Controllers'
+],function (){
+    Route::get('/categories/shop/{slug}','showCategoryController@shop');
+    Route::get('/categories/post/{slug}','showCategoryController@post');
 });
 
 //post
@@ -77,6 +86,7 @@ Route::group([
 Route::group([
     'namespace'=> 'App\Http\Controllers'
 ],function (){
+    Route::post('/content-header','HeaderController@content_header');
     Route::post('/image-header','HeaderController@image_header');
     Route::post('/slider-header','HeaderController@Slider_header');
     Route::get('/show-header','HeaderController@show');
