@@ -86,9 +86,9 @@ Route::group([
 Route::group([
     'namespace'=> 'App\Http\Controllers'
 ],function (){
-    Route::post('/content-header','HeaderController@content_header');
-    Route::post('/image-header','HeaderController@image_header');
-    Route::post('/slider-header','HeaderController@Slider_header');
+    Route::post('/content-header','HeaderController@content_header')->middleware(['auth:sanctum','can:header_manager']);
+    Route::post('/image-header','HeaderController@image_header')->middleware(['auth:sanctum','can:header_manager']);
+    Route::post('/slider-header','HeaderController@Slider_header')->middleware(['auth:sanctum','can:header_manager']);
     Route::get('/show-header','HeaderController@show');
 });
 
@@ -147,5 +147,10 @@ Route::group([
     Route::get('analyze/{analyze}','AnalyzeController@show');
     Route::post('analyze','AnalyzeController@store')->middleware('auth:sanctum');
 });
-
+//tell me
+Route::group([
+    'namespace'=> 'App\Http\Controllers'
+],function (){
+    Route::post('/tellMe','TellmeController@store');
+});
 Route::get('/content',[\App\Http\Controllers\ContentController::class,'index']);
