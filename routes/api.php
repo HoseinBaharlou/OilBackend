@@ -151,6 +151,9 @@ Route::group([
 Route::group([
     'namespace'=> 'App\Http\Controllers'
 ],function (){
+    Route::get('/tellMe','TellmeController@index')->middleware('auth:sanctum','can:tellMe_manager');
     Route::post('/tellMe','TellmeController@store');
 });
 Route::get('/content',[\App\Http\Controllers\ContentController::class,'index']);
+
+

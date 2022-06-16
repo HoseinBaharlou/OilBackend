@@ -4,10 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Tellme;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class TellmeController extends Controller
 {
+    //show all tellMe
+    public function index(){
+        $tellMe = DB::table('tellmes')->orderBy('id','desc')->get();
+
+        return response()->json([
+            'tellMe'=>$tellMe
+        ],200);
+    }
     public function store(Request $request){
         //validate
         $validator = Validator::make($request->all(),[

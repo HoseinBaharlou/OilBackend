@@ -117,6 +117,10 @@ class permissionSeeder extends Seeder
               'name'=>'edit_users',
               'persian_name'=>'ویرایش کاربر'
             ],
+            [
+                'name'=>'tellMe_manager',
+                'مدیریت بخش تماس با ما'
+            ]
         ];
 
         for ($i=0;$i < count($permission);$i++){
