@@ -154,6 +154,14 @@ Route::group([
     Route::get('/tellMe','TellmeController@index')->middleware('auth:sanctum','can:tellMe_manager');
     Route::post('/tellMe','TellmeController@store');
 });
-Route::get('/content',[\App\Http\Controllers\ContentController::class,'index']);
 
+
+//page manager
+Route::group([
+    'namespace'=> 'App\Http\Controllers'
+],function (){
+    Route::get('/content','ContentController@index');
+    Route::post('/content','ContentController@store')->middleware('auth:sanctum','can:page_manager');
+    Route::post('/content/uploadImage','ContentController@uploadImage')->middleware('auth:sanctum','can:page_manager');
+});
 

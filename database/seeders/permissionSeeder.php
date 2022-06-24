@@ -119,7 +119,11 @@ class permissionSeeder extends Seeder
             ],
             [
                 'name'=>'tellMe_manager',
-                'مدیریت بخش تماس با ما'
+                'persian_name'=>'مدیریت بخش تماس با ما'
+            ],
+            [
+                'name'=>'page_manager',
+                'persian_name'=>'مدیریت صفحات'
             ]
         ];
 
